@@ -1,0 +1,39 @@
+#include <RCSwitch.h>
+#define RELAY1 8
+#define RELAY2 9
+RCSwitch mySwitch = RCSwitch();
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(RELAY1, OUTPUT);
+  pinMode(RELAY2, OUTPUT);
+  mySwitch.enableReceive(0); / pin #2
+}
+
+void loop() {
+  if (mySwitch.available()) {
+    
+    int value = mySwitch.getReceivedValue();
+    
+    if (value == 0) {
+      Serial.print("Unknown encoding");
+    } else {
+      Serial.print("Received ");
+      Serial.print( mySwitch.getReceivedValue() );
+    }
+if (value == 2222) {
+  digitalWrite(8, LOW);
+  }
+  if (value == 1111) {
+  digitalWrite(8, HIGH);
+  }
+  if (value == 3333) {
+  digitalWrite(9, LOW);
+  }
+  if (value == 4444) {
+  digitalWrite(9, HIGH);
+  }
+}
+    mySwitch.resetAvailable();
+
+  }
