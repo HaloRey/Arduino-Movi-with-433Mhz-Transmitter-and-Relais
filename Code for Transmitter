@@ -1,0 +1,60 @@
+#include "MOVIShield.h"     
+#ifdef ARDUINO_ARCH_AVR 
+#include <SoftwareSerial.h>  
+#include <RCSwitch.h>
+#endif
+
+const int led1 = 13;
+const int led2 = 12;
+MOVI recognizer(true);            
+RCSwitch mySwitch = RCSwitch();
+void setup()  
+{Serial.begin(9600);
+  mySwitch.enableTransmit(4);
+  pinMode(led1, OUTPUT);    // Make LED port writeable
+  digitalWrite(led1, HIGH); // Blink LED.   
+  delay(1);                   
+  digitalWrite(led1, LOW);  
+  delay(1); 
+  pinMode(led2, OUTPUT);    // Make LED port writeable
+  digitalWrite(led2, HIGH); // Blink LED.   
+  delay(1);                   
+  digitalWrite(led2, LOW);  
+  delay(1);          
+  
+  recognizer.init();      
+
+  recognizer.callSign("Arduino"); 
+  recognizer.addSentence("Light on"); 
+  recognizer.addSentence("Darkness falls");           
+  recognizer.addSentence("Coffee to go"); 
+  recognizer.addSentence("Coffee off"); 
+  recognizer.train();                           
+  //*/
+
+  //  recognizer.setThreshold(5);   
+}
+
+void loop() 
+{
+  signed int res=recognizer.poll(); 
+  if (res==1) {                    
+    mySwitch.send(2222, 24);
+    digitalWrite(led1, HIGH);        
+    recognizer.say("and there was light!"); 
+  }{
+  if (res==2) {                    
+    mySwitch.send(1111, 24);
+    digitalWrite(led1, LOW);        
+    recognizer.say("Darkness is rising!"); 
+  }{
+    if (res==3) {                    // Sentence 3 
+    mySwitch.send(3333, 24);
+    digitalWrite(led2, HIGH);        
+    recognizer.say("Coffee is in progress!"); 
+  }{
+    if (res==4) {                    // Sentence 4 
+    mySwitch.send(4444, 24);
+    digitalWrite(led2, LOW);        
+    recognizer.say("Coffee is off!"); 
+  }}}}}
